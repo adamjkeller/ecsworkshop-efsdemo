@@ -96,10 +96,7 @@ class ECSFargateEFSDemo(core.Stack):
         )
 
         ## END IAM ##
-        self.service_log_group = aws_logs.LogGroup(
-            self, "LogGrp",
-            log_group_name="/ecs/cloudcmd-rw"
-        )
+        self.service_log_group = aws_logs.LogGroup(self, "ECSEFSDemoLogGrp")
         ## Logging ##
         
         
@@ -141,12 +138,22 @@ class ECSFargateEFSDemo(core.Stack):
             value="{},{}".format(self.frontend_sec_grp.security_group_id, self.service_sec_grp.security_group_id),
             export_name="ECSFargateEFSDemoSecGrps"
         )
+        
+        core.CfnOutput(
+            self, "LBURL",
+            value=self.load_balancer.load_balancer_dns_name,
+            export_name="ECSFargateEFSDemoLBURL"
+        )
+
+        core.CfnOutput(
+            self, "LogGroupName",
+            value=self.service_log_group.log_group_name,
+            export_name="ECSFargateEFSDemoLogGroupName"
+        )
 
 
 app = core.App()
 
-_env = core.Environment(account=getenv('CDK_DEFAULT_ACCOUNT'), region=getenv('AWS_DEFAULT_REGION'))
-
-ECSFargateEFSDemo(app, "ecsworkshop-efs-fargate-demo", env=_env)
+ECSFargateEFSDemo(app, "ecsworkshop-efs-fargate-demo")
 
 app.synth()

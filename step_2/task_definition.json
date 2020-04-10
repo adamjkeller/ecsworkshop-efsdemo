@@ -5,7 +5,7 @@
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "/ecs/cloudcmd-rw",
+          "awslogs-group": "{{LOGGROUPNAME}}",
           "awslogs-region": "us-west-2",
           "awslogs-stream-prefix": "ecs"
         }
