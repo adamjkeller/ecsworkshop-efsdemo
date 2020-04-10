@@ -1,14 +1,13 @@
 #!/bin/bash
 
-execution_role_arn="arn:aws:iam::333258026273:role/ecsworkshop-efs-fargate-d-TaskExecutionRole250D253-UF9667SRIYY3"
-#task_role_arn="arn:aws:iam::333258026273:role/testing-ecs-efs"
-fs_id="fs-0d1453a7"
+cloudformation_outputs=$(aws cloudformation describe-stacks --stack-name ecsworkshop-efs-fargate-demo | jq .Stacks[].Outputs)
+execution_role_arn=$(echo $cloudformation_outputs | jq -r '.[]| select(.ExportName | contains("ECSFargateEFSDemoTaskExecutionRoleARN"))| .OutputValue')
+fs_id=$(echo $cloudformation_outputs | jq -r '.[]| select(.ExportName | contains("ECSFargateEFSDemoFSID"))| .OutputValue')
+target_group_arn=$(echo $cloudformation_outputs | jq -r '.[]| select(.ExportName | contains("ECSFargateEFSDemoTGARN"))| .OutputValue')
+private_subnets=$(echo $cloudformation_outputs | jq -r '.[]| select(.ExportName | contains("ECSFargateEFSDemoPrivSubnets"))| .OutputValue')
+security_groups=$(echo $cloudformation_outputs | jq -r '.[]| select(.ExportName | contains("ECSFargateEFSDemoSecGrps"))| .OutputValue')
 cluster_name="ECS-Fargate-EFS-Demo"
-load_balancer="ecswo-ALBAE-3RHA8P87VOFR"
-target_group_arn="arn:aws:elasticloadbalancing:us-west-2:333258026273:targetgroup/ECSDemoFargateEFS/11d5a1e2036151cb"
 container_name="cloudcmd-rw"
-private_subnets="subnet-0ec590c948ecc4bcd,subnet-04000b144902ada36"
-security_groups="sg-02929d49e48390895,sg-07fa9c0f32b0e897f"
 task_definition_arn="arn:aws:ecs:us-west-2:333258026273:task-definition/cloudcmd-rw:9"
 
 register_task_def() {
