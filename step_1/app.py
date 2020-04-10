@@ -4,6 +4,7 @@ from aws_cdk import (
     aws_elasticloadbalancingv2 as elbv2,
     aws_iam as iam,
     aws_efs as efs,
+    aws_logs,
     core
 )
 
@@ -25,7 +26,7 @@ class ECSFargateEFSDemo(core.Stack):
         )
         ## End VPC and ECS Cluster ##
 
-        ## Load balancer for Wordpress container ##
+        ## Load balancer for ECS service ##
         self.frontend_sec_grp = ec2.SecurityGroup(
             self, "FrontendIngress",
             vpc=self.vpc,
@@ -58,21 +59,27 @@ class ECSFargateEFSDemo(core.Stack):
         ## End Load balancer ##
 
         ## EFS Setup ##
-        self.efs_sec_grp = ec2.SecurityGroup(
+        self.service_sec_grp = ec2.SecurityGroup(
             self, "EFSSecGrp",
             vpc=self.vpc,
             description="Allow access to self on NFS Port",
         )
 
-        self.efs_sec_grp.connections.allow_from(
-            other=self.efs_sec_grp,
+        self.service_sec_grp.connections.allow_from(
+            other=self.service_sec_grp,
             port_range=ec2.Port(protocol=ec2.Protocol.TCP, string_representation="Self", from_port=2049, to_port=2049)
+        )
+        
+        # TODO: possibly create another sec grp for 8000
+        self.service_sec_grp.connections.allow_from(
+            other=self.frontend_sec_grp,
+            port_range=ec2.Port(protocol=ec2.Protocol.TCP, string_representation="LB2Service", from_port=8000, to_port=8000)
         )
 
         self.shared_fs = efs.EfsFileSystem(
             self, "SharedFS",
             vpc=self.vpc,
-            security_group=self.efs_sec_grp,
+            security_group=self.service_sec_grp,
         )
         ## End EFS Setup ##
 
@@ -89,6 +96,14 @@ class ECSFargateEFSDemo(core.Stack):
         )
 
         ## END IAM ##
+        self.service_log_group = aws_logs.LogGroup(
+            self, "LogGrp",
+            log_group_name="/ecs/cloudcmd-rw"
+        )
+        ## Logging ##
+        
+        
+        ## ##
 
         # Cloudformation Outputs
         core.CfnOutput(
@@ -123,8 +138,8 @@ class ECSFargateEFSDemo(core.Stack):
 
         core.CfnOutput(
             self, "SecurityGroups",
-            value=",".join([x.subnet_id for x in self.vpc.private_subnets]),
-            export_name="ECSFargateEFSDemoPrivSubnets"
+            value="{},{}".format(self.frontend_sec_grp.security_group_id, self.service_sec_grp.security_group_id),
+            export_name="ECSFargateEFSDemoSecGrps"
         )
 
 

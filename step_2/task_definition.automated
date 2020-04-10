@@ -1,5 +1,5 @@
 {
-  "executionRoleArn": "arn:aws:iam::333258026273:role/ecsTaskExecutionRole",
+  "executionRoleArn": "arn:aws:iam::333258026273:role/ecsworkshop-efs-fargate-d-TaskExecutionRole250D253-UF9667SRIYY3",
   "containerDefinitions": [
     {
       "logConfiguration": {
@@ -36,7 +36,7 @@
   ],
   "memory": "512",
   "cpu": "256",
-  "taskRoleArn": "arn:aws:iam::333258026273:role/testing-ecs-efs",
+  "taskRoleArn": "",
   "requiresCompatibilities": [
     "FARGATE"
   ],
@@ -45,7 +45,7 @@
   "volumes": [
     {
       "efsVolumeConfiguration": {
-        "fileSystemId": "fs-f1e6a25b",
+        "fileSystemId": "fs-0d1453a7",
         "rootDirectory": "/"
       },
       "name": "efs-vol"
