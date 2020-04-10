@@ -62,6 +62,7 @@ export target_group_arn=$(echo $cloudformation_outputs | jq -r '.[]| select(.Exp
 export private_subnets=$(echo $cloudformation_outputs | jq -r '.[]| select(.ExportName | contains("ECSFargateEFSDemoPrivSubnets"))| .OutputValue')
 export security_groups=$(echo $cloudformation_outputs | jq -r '.[]| select(.ExportName | contains("ECSFargateEFSDemoSecGrps"))| .OutputValue')
 export load_balancer_url=$(echo $cloudformation_outputs | jq -r '.[]| select(.ExportName | contains("ECSFargateEFSDemoLBURL"))| .OutputValue')
+export log_group_name=$(echo $cloudformation_outputs | jq -r '.[]| select(.ExportName | contains("ECSFargateEFSDemoLogGroupName"))| .OutputValue')
 export cluster_name="ECS-Fargate-EFS-Demo"
 export container_name="cloudcmd-rw"
 ```
@@ -112,6 +113,14 @@ Now that the service is created, we can access it via the load balancer url. Let
 
 Open the Load Balaner URL in your browser, here's the command to get the url:
 
+**NOTE**: It may take a couple of minutes before you can access the url
+
 ```bash
 echo "http://$load_balancer_url"
 ```
+
+#### Add a file to the UI
+
+The web interface should look something like this:
+
+![ui][./cc-ui.png]
