@@ -137,7 +137,7 @@ Now you should see a directory named `EFS_DEMO`. This file is stored on the EFS 
 To stop the task: 
 
 ```bash
-task_arn=$(aws ecs list-tasks --cluster $cluster_name | jq -r .taskArns[])
+task_arn=$(aws ecs list-tasks --cluster $cluster_name --service-name cloudcmd-rw | jq -r .taskArns[])
 aws ecs stop-task --task $task_arn --cluster $cluster_name
 ```
 
