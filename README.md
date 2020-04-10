@@ -8,7 +8,14 @@ The purpose of this repo is to showcase how you can run a stateful container on 
 
 - AWS CLI
 - AWS CDK
+- Python3.6 +
 - AWS Access Keys or an IAM role attached to the instance running with permissions to build the below resources.
+
+```bash
+pip install -r requirements.txt
+```
+
+This was tested on a Cloud9 instance.
 
 ### Step 1
 
@@ -148,3 +155,13 @@ When you go back to the Load Balancer URL in the browser, you should see a 503 e
 In a couple of minutes, head back to the URL and you should see the UI again. Also, you should see your directory `EFS_DEMO` listed.
 
 That's it! You've successfully created a stateful service in Fargate and watched as a task died and was replaced with the same stateful backend storage layer.
+
+#### Cleanup
+
+```bash
+aws ecs update-service --cluster $cluster_name --service cloudcmd-rw --desired-count 0
+task_arn=$(aws ecs list-tasks --cluster $cluster_name --service-name cloudcmd-rw | jq -r .taskArns[])
+aws ecs stop-task --task $task_arn --cluster $cluster_name
+aws ecs delete-service --cluster $cluster_name --service cloudcmd-rw
+cdk destroy -f
+```
