@@ -6,7 +6,7 @@
         "logDriver": "awslogs",
         "options": {
           "awslogs-group": "{{LOGGROUPNAME}}",
-          "awslogs-region": "us-west-2",
+          "awslogs-region": "((AWS_REGION}}",
           "awslogs-stream-prefix": "ecs"
         }
       },
