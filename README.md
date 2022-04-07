@@ -1,3 +1,7 @@
+# Deprecated
+
+Please navigate to https://github.com/aws-containers/ecsworkshop-efsdemo for further updates.
+
 ## ECSWorkshop - EFS Demo
 
 ### Purpose
